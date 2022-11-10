@@ -11,7 +11,8 @@
     "@uiw/react-md-editor": "^3.19.7",
     "phosphor-react": "^1.4.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "slugify": "^1.6.5"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^1.1.3",

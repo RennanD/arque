@@ -1,14 +1,23 @@
-import { ReactNode } from 'react'
+import { InputHTMLAttributes, ReactNode } from 'react'
 
-interface ButtonRootProps {
+interface ButtonRootProps extends InputHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
+  full?: boolean
 }
 
-function ButtonRoot({ children }: ButtonRootProps) {
+function ButtonRoot({
+  children,
+  type = 'button',
+  full = false,
+  ...rest
+}: ButtonRootProps) {
   return (
     <button
-      className="flex items-center gap-2 bg-green-700 rounded-sm px-4 py-2"
-      type="button"
+      className={`flex items-center gap-2 bg-green-700 rounded-md px-4 py-2 ${
+        full ? 'w-full' : ''
+      }`}
+      type={type}
+      {...rest}
     >
       {children}
     </button>
