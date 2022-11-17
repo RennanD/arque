@@ -59,7 +59,7 @@ export function LessonProvider({ children }: LessonProviderProps) {
   async function handleExportLessons() {
     const formattedTexts = lessons.map((lesson) => {
       const commit = lesson.commitLink
-        ? `${'\n\n'}[${lesson.title}](${lesson.commitLink})`
+        ? `${'\n\n'}[Commit: ${lesson.title}](${lesson.commitLink})`
         : ''
 
       return `## ${lesson.title} ${'\n'}${lesson.description}${commit}`
