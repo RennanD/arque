@@ -13,8 +13,8 @@ function ButtonRoot({
 }: ButtonRootProps) {
   return (
     <button
-      className={`flex items-center gap-2 bg-green-700 rounded-md px-4 py-2 ${
-        full ? 'w-full' : ''
+      className={`flex items-center gap-2 bg-green-700 rounded-md px-4 py-3 ${
+        full ? 'w-full items-center justify-center' : ''
       }`}
       type={type}
       {...rest}

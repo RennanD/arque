@@ -1,10 +1,15 @@
+import { BrowserRouter } from 'react-router-dom'
+
 import { LessonProvider } from './contexts/LessonContext'
-import { NewDoc } from './pages/NewDoc'
+
+import { Router } from './routes'
 
 export function App() {
   return (
     <LessonProvider>
-      <NewDoc />
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
     </LessonProvider>
   )
 }

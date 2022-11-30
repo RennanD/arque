@@ -1,43 +1,40 @@
-import { useState } from 'react'
-import {
-  Article,
-  ArticleMedium,
-  Check,
-  Export,
-  GitBranch,
-  XCircle,
-} from 'phosphor-react'
+import { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+
+import { Article, ArticleMedium, Check, GitBranch } from 'phosphor-react'
 
 import MDEditor from '@uiw/react-md-editor'
-
-import slugify from 'slugify'
 
 import { Button } from '../components/Button'
 import { Label } from '../components/Label'
 import { NavBar } from '../components/NavBar'
-// import { SideBar } from '../components/SideBar'
 import { useLessons } from '../hooks/useLessons'
-import { LessonsList } from '../components/LessonsList'
+import { LessonProps } from '../contexts/LessonContext'
+import { LESSONS_KEY } from '../config/storage'
 
-export function NewDoc() {
+type RouteParams = {
+  slug: string
+}
+
+export function EditDoc() {
   const [markdonw, setMarkdown] = useState('')
   const [title, setTitle] = useState('')
   const [commitLink, setCommitLink] = useState('')
 
-  const { createLesson, changeCluster, cluster, exportLessons, clearLessons } =
-    useLessons()
+  const { saveLesson } = useLessons()
+  const { slug } = useParams<RouteParams>()
+  const navigate = useNavigate()
 
-  function handleAddLesson() {
+  function handleSaveLesson() {
     if (!markdonw.trim() || !title.trim()) {
       alert('O título e a descrição são obrigatórios')
       return
     }
-    const lessonSlug = slugify(title)
 
     try {
-      createLesson({
+      saveLesson({
         description: markdonw,
-        slug: lessonSlug,
+        slug: slug!,
         title,
         commitLink,
       })
@@ -45,7 +42,8 @@ export function NewDoc() {
       setCommitLink('')
       setMarkdown('')
       setTitle('')
-      alert('Aula adicionada com sucesso')
+      alert('Aula salva com sucesso')
+      navigate('/')
     } catch (error) {
       const isAppError = error instanceof Error
 
@@ -53,41 +51,30 @@ export function NewDoc() {
     }
   }
 
-  async function handleExportLessons() {
-    if (!cluster.trim()) {
-      alert('Digite um nome para o cluster')
-      return
+  useEffect(() => {
+    const storage = localStorage.getItem(LESSONS_KEY)
+
+    const storageLeson: LessonProps[] = storage
+      ? JSON.parse(storage)
+      : ([] as LessonProps[])
+
+    const findLesson = storageLeson.find(
+      (lessonItem) => lessonItem.slug === slug!,
+    )
+
+    if (findLesson) {
+      setTitle(findLesson.title)
+      setMarkdown(findLesson.description)
+      setCommitLink(findLesson.commitLink || '')
     }
-
-    await exportLessons()
-
-    alert('Descrições copiadas para área de transferência')
-  }
-
-  function handleClearLessons() {
-    clearLessons()
-
-    alert('Listagem de aulas, limpa com sucesso')
-  }
+  }, [slug])
 
   return (
     <div className="flex w-full min-h-screen flex-row overflow-hidden">
       {/* <SideBar /> */}
       <div className="w-full h-screen">
         <NavBar.Root>
-          <NavBar.Title onChangeText={changeCluster}>{cluster}</NavBar.Title>
-
-          <div className="w-40 flex justify-center gap-4 ml-6">
-            <button className="p-4 bg-gray-600 rounded-md">
-              <Export size={22} color="#00B37E" onClick={handleExportLessons} />
-            </button>
-
-            <LessonsList />
-
-            <button className="p-4 bg-gray-600 rounded-md">
-              <XCircle size={22} color="#ef4444" onClick={handleClearLessons} />
-            </button>
-          </div>
+          <NavBar.Title readOnly>Editar dados da aula</NavBar.Title>
         </NavBar.Root>
 
         <div className="pb-10 max-h-[calc(100vh_-_80px)] w-full overflow-y-auto">
@@ -148,11 +135,11 @@ export function NewDoc() {
               />
 
               <div className="mt-8">
-                <Button.Root full onClick={handleAddLesson}>
+                <Button.Root full onClick={handleSaveLesson}>
                   <Button.Icon>
                     <Check size={24} />
                   </Button.Icon>
-                  <Button.Title>Adicionar</Button.Title>
+                  <Button.Title>Salvar</Button.Title>
                 </Button.Root>
               </div>
             </form>
